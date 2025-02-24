@@ -695,7 +695,7 @@ class RunApplication(object):
 					f_out[idx] = 1.0
 			self.ax2.plot(w_out, f_out, ls='-', color="#0504aa", lw=0.6)
 			self.fig.canvas.draw_idle()
-			stitched_fname = self.merged_filename.text.strip()
+			stitched_fname = self.merged_filename.text.strip().replace(".fits", ".dat")
 			if os.path.isfile(stitched_fname):
 				print(f"File {stitched_fname} exists. Do you want to overwrite it? ")
 				ans = input("(y/n) -> ").strip()
