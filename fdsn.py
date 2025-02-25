@@ -677,8 +677,8 @@ class RunApplication(object):
 					gaps.append([self.data.w[i-1][-1], self.data.w[i][0]])
 			idx = np.argsort(w)
 			w = w[idx]; f = f[idx]; c = c[idx]
-			dw = np.mean(dw)
-			print(f"Mean dl = {dw:.3f}")
+			dw = np.quantile(dw, 0.4)
+			print(f"Output sampled at dl = {dw:.3f}")
 			w_out = np.arange(w[0], w[-1]+dw, dw)
 			if args.interpolator == "spectres" and "spectres" in modules:
 				f_int = spectres(w_out, w, f)
