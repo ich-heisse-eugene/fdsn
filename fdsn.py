@@ -615,8 +615,8 @@ class RunApplication(object):
 
     def discardFit(self, event):
         if self.curfit != None and self.button_discard.color != "black":
-            self.curfit.remove(self.curfit[0])
-            self.curnorm.remove(self.curnorm[0])
+            self.curfit[0].remove()
+            self.curnorm[0].remove()
             self.curfit = None
             self.curnorm = None
             self.fig.canvas.draw_idle()
