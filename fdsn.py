@@ -337,11 +337,11 @@ class RunApplication(object):
         self.fitterFunctions = itertools.cycle(['Chebyshev', 'Legendre', 'Spline'])
         self.data.cur_wcont = np.array([])
         self.data.cur_cont = np.array([])
-        if self.curfit != None:
-            self.curfit[0].remove()
+        if self.curfit != None and len(self.curfit) > 0:
+            self.curfit.remove(self.curfit[0])
             self.curfit = None
-        if self.curnorm != None:
-            self.curnorm[0].remove()
+        if self.curnorm != None and len(self.curnorm) > 0:
+            self.curnorm.remove(self.curnorm[0])
             self.curnorm = None
         if self.slider_select.val > 0:
             self.main_segment = np.array([])
@@ -401,9 +401,9 @@ class RunApplication(object):
 
     def selectAll(self, event):
         self.fig.canvas.mpl_disconnect(self.cid)
-        self.data.cur_wcont = np.append(self.data.cur_wcont, [self.main_segment_w, self.aux_segment_w]).flatten()
-        self.data.cur_cont = np.append(self.data.cur_cont, [self.main_segment, self.aux_segment]).flatten()
-        idx = np.argsort(data.cur_wcont)
+        self.data.cur_wcont = np.append(self.data.cur_wcont, self.main_segment_w).flatten()
+        self.data.cur_cont = np.append(self.data.cur_cont, self.main_segment).flatten()
+        idx = np.argsort(self.data.cur_wcont)
         self.data.cur_wcont = self.data.cur_wcont[idx]
         self.data.cur_cont = self.data.cur_cont[idx]
         self.ax1.plot(self.data.cur_wcont, self.data.cur_cont, color="#be03fd", lw=1.2, ls='-')
@@ -457,7 +457,7 @@ class RunApplication(object):
     def addSpecial(self, event):
         def onclick(event):
             if event.button==1 and event.inaxes in [self.ax1]:
-                self.data.cur_wcont = np.append(self.data.cur_wcont, np.repeat(event.xdata, 5)+np.linspace(1e-9,5e-9,5))
+                self.data.cur_wcont = np.append(self.data.cur_wcont, np.repeat(event.xdata, 5)+np.linspace(1e-4,5e-4,5))
                 self.data.cur_cont = np.append(self.data.cur_cont, np.repeat(event.ydata, 5))
                 self.ax1.plot(event.xdata, event.ydata, marker='o', ms=5, color='#e50000', mec='k', mew=0.7)
                 self.fig.canvas.draw_idle()
@@ -478,7 +478,7 @@ class RunApplication(object):
 
     def soyPicasso(self, event):
         def onclick(event):
-            if event.button==1 and event.inaxes in [self.ax1]:
+            if event.button==1 and event.dblclick and event.inaxes in [self.ax1]:
                 self.data.cur_wcont = np.append(self.data.cur_wcont, event.xdata)
                 self.data.cur_cont = np.append(self.data.cur_cont, event.ydata)
                 self.ax1.plot(event.xdata, event.ydata, marker='o', ms=5, color='#e50000', mec='k', mew=0.7)
@@ -588,6 +588,7 @@ class RunApplication(object):
                 self.curnorm = None
             self.curfit = self.ax1.plot(self.data.cur_wcont, cont_full, ls='-', color='red', lw=1)
             self.curnorm = self.ax2.plot(self.main_segment_w, self.main_segment/self.cur_cont_fit, ls='-', color='#02ab2e', lw=1)
+            self.ax2.set_ylim(0, 1.5)
             if len(self.aux_segment_w) != 0:
                 self.ax2.set_xlim(np.min([self.aux_segment_w[0], self.main_segment_w[0]]), np.max([self.aux_segment_w[-1], self.main_segment_w[-1]]))
             else:
@@ -614,8 +615,8 @@ class RunApplication(object):
 
     def discardFit(self, event):
         if self.curfit != None and self.button_discard.color != "black":
-            self.curfit[0].remove()
-            self.curnorm[0].remove()
+            self.curfit.remove(self.curfit[0])
+            self.curnorm.remove(self.curnorm[0])
             self.curfit = None
             self.curnorm = None
             self.fig.canvas.draw_idle()
